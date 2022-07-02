@@ -27,3 +27,22 @@ def get_request(request):
     except Exception as error:
         print(f"Error(get_request): {error}")
         return Response({"result": "Ошибка обработки данных!"})
+
+
+@api_view(http_method_names=["GET", "POST", "PUT", "DELETE"])
+@permission_classes([AllowAny])
+@csrf_exempt
+def post_request(request):
+    try:
+        if request.method == "POST":
+            title = request.POST.get("title", "")
+            image = request.FILES.get("image", None)
+            if title and image:
+                return Response({"result": f"Успешно"})
+            else:
+                return Response({"result": "Ошибка получения данных!"})
+        else:
+            return Response({"result": "Ошибка, данные метод не реализован!"})
+    except Exception as error:
+        print(f"Error(get_request): {error}")
+        return Response({"result": "Ошибка обработки данных!"})
