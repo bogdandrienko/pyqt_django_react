@@ -1,11 +1,10 @@
 import React from 'react';
-import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <footer className="footer">
+    <footer className="footer bg-light p-1">
       <div className="container">
-        <span className="text-muted">Place sticky footer content here.</span>
+        <span className="text-muted">Footer</span>
       </div>
     </footer>
   )

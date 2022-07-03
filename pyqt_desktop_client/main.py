@@ -13,8 +13,11 @@ class MainUiClass(QWidget):
 
         self.layout = QGridLayout()
 
+        self.label_server = QLabel("укажите адрес web сервера")
+        self.line_edit_server = QLineEdit("http://192.168.80.131:80")
+
         self.label_path = QLabel("укажите количество изображений")
-        self.line_edit_path = QLineEdit("20")
+        self.line_edit_path = QLineEdit("5")
 
         self.label_result = QLabel("")
 
@@ -22,12 +25,15 @@ class MainUiClass(QWidget):
         self.btn_start = QPushButton("запуск")
         self.btn_start.clicked.connect(self.start_action)
 
-        self.layout.addWidget(self.label_path, 0, 0)
-        self.layout.addWidget(self.line_edit_path, 0, 1)
+        self.layout.addWidget(self.label_server, 0, 0)
+        self.layout.addWidget(self.line_edit_server, 0, 1)
 
-        self.layout.addWidget(self.label_result, 1, 0)
-        self.layout.addWidget(self.check_box_sync, 1, 1)
-        self.layout.addWidget(self.btn_start, 1, 2)
+        self.layout.addWidget(self.label_path, 1, 0)
+        self.layout.addWidget(self.line_edit_path, 1, 1)
+
+        self.layout.addWidget(self.label_result, 2, 0)
+        self.layout.addWidget(self.check_box_sync, 2, 1)
+        self.layout.addWidget(self.btn_start, 2, 2)
 
         self.setGeometry(640, 480, 640, 480)
         self.setWindowTitle('PyQt5')
@@ -36,19 +42,20 @@ class MainUiClass(QWidget):
 
     def start_action(self):
         try:
+            server = str(self.line_edit_server.text())
             count = int(self.line_edit_path.text())
             if not self.check_box_sync.isChecked():
-                new_thread = Thread(target=MainUiClass.sync_get_request, args=[count, self])
+                new_thread = Thread(target=MainUiClass.sync_get_request, args=[server, count, self])
                 new_thread.start()
             else:
                 loop = asyncio.get_event_loop()
-                loop.run_until_complete(MainUiClass.async_post_request(count, self))
+                loop.run_until_complete(MainUiClass.async_post_request(server, count, self))
         except Exception as error:
             print(error)
 
     @staticmethod
-    def sync_get_request(count, obj):
-        url = f'http://127.0.0.1:8000/get_request/?count={count}'
+    def sync_get_request(server, count, obj):
+        url = f'{server}/get_request/?count={count}'
         headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
                           'AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -62,8 +69,8 @@ class MainUiClass(QWidget):
             obj.label_result.setText("Ошибка получения данных")
 
     @staticmethod
-    async def async_post_request(count, obj):
-        # url = f'http://127.0.0.1:8000/get_request/?count={count}'
+    async def async_post_request(server, count, obj):
+        # url = f"{server}/get_request/?count={count}"
         headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
                           'AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -82,7 +89,7 @@ class MainUiClass(QWidget):
 
                     async with aiohttp.ClientSession() as session1:
                         async with session1.post(
-                                url="http://127.0.0.1:8000/post_request/",
+                                url=f"{server}/post_request/",
                                 data={"title": f"image {i}", "image": data},
                                 # data=form,
                                 headers=headers

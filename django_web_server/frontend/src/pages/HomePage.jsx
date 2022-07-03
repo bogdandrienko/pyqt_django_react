@@ -67,12 +67,7 @@ export function HomePage() {
   const dispatch = useDispatch();
 
   const ImageStore = useSelector((state) => state.ImageStore);
-  const {
-    load: load,
-    data: data,
-    error: error,
-    fail: fail,
-  } = ImageStore;
+  const { load: load, data: data, error: error, fail: fail } = ImageStore;
 
   const getImages = () => {
     dispatch(ImageAction());
@@ -94,7 +89,27 @@ export function HomePage() {
       <main className="custom_main p-0 m-0 w-100">
         <Navbar />
         <div style={{ margin: "50px" }}>
-          <h1>Django <small className="small text-secondary">(nginx / gunicorn / django-rest-framework / django-grappelli / django-cors-headers)</small> + React <small className="small text-secondary">(typescript / redux / router-dom / axios)</small></h1>
+          <div className="d-flex row align-content-between">
+            <h1 className="col-6 text-success">BACKEND</h1>
+            <h1 className="col-6 text-primary">FRONTEND</h1>
+          </div>
+          <div className="d-flex row align-content-between">
+            <h5 className="col-6">
+              Django{" "}
+              <small className="small text-secondary">
+                (VM / *nix / nginx / gunicorn / django-rest-framework /
+                django-grappelli / django-cors-headers)
+              </small>
+            </h5>
+            <h5 className="col-6">
+              React{" "}
+              <small className="small text-secondary">
+                (typescript / redux / router-dom / axios)
+              </small>
+            </h5>
+          </div>
+
+          <hr />
 
           <div className="btn-group">
             <button
@@ -111,26 +126,35 @@ export function HomePage() {
             </button>
           </div>
 
-          <div className="card m-1 p-1">
-            {load && <div className="text-primary">Идёт загрузка...</div>}
-            {data && data.result && (
-              <ul className="list-group mb-3">
-                {data.result.map((x) => (
-                  <li
-                    key={x.id}
-                    className="list-group-item d-flex justify-content-between lh-sm"
-                  >
-                    <div>
-                      <h6 className="my-0">{x.title}</h6>
-                      <img src={`/static/${x.image}`} alt="изображение отсутствует"/>
-                    </div>
-                    <span className="text-muted">#{x.id}</span>
-                  </li>
-                ))}
-              </ul>
+          <div className="">
+            {load && (
+              <div className="card m-1 p-1 text-primary">Идёт загрузка...</div>
             )}
-            {error && <div className="text-danger">{error}</div>}
-            {fail && <div className="text-warning">{fail}</div>}
+            {data &&
+              data.result &&
+              (data.result.length <= 0 ? (
+                <div className="card m-1 p-1 text-danger">Данных нет!</div>
+              ) : (
+                <ul className="card m-1 p-1 list-group mb-3">
+                  {data.result.map((x) => (
+                    <li
+                      key={x.id}
+                      className="list-group-item d-flex justify-content-between lh-sm"
+                    >
+                      <div>
+                        <h6 className="my-0">{x.title}</h6>
+                        <img
+                          src={`/static/${x.image}`}
+                          alt="изображение отсутствует"
+                        />
+                      </div>
+                      <span className="text-muted">#{x.id}</span>
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            {error && <div className="card m-1 p-1 text-danger">{error}</div>}
+            {fail && <div className="card m-1 p-1 text-warning">{fail}</div>}
           </div>
         </div>
       </main>
