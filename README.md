@@ -1,2 +1,5 @@
-# pyqt_django_react
-Test async download and send images from pyqt5 to django. And view all images on react with redux.
+# Связка приложений: из интернета через десктопное PyQt5 на веб приложение Django + React
+* Django: (VM / *nix / nginx / gunicorn / django-rest-framework / django-grappelli / django-cors-headers)
+* React: (typescript / redux / router-dom / axios)
+
+![Draw](new.gif)
