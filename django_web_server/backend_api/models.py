@@ -1,3 +1,4 @@
+from django.core.validators import FileExtensionValidator
 from django.db import models
 
 # Create your models here.
@@ -25,7 +26,7 @@ class ImageModel(models.Model):
         verbose_name="Изображение:",
         help_text='<small class="text-muted">Изображение</small><hr><br>',
 
-        # validators=[FileExtensionValidator(['jpg', 'png'])],
+        validators=[FileExtensionValidator(['jpg', 'png'])],
         upload_to='img/receipt',
         max_length=100,
     )
