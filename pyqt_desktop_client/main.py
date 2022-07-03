@@ -6,6 +6,7 @@ import aiohttp
 import asyncio
 import requests
 import json
+import base64
 
 
 class MainUiClass(QWidget):
@@ -45,6 +46,8 @@ class MainUiClass(QWidget):
             else:
                 loop = asyncio.get_event_loop()
                 loop.run_until_complete(MainUiClass.async_get_request(count, self))
+
+
         except Exception as error:
             print(error)
             count = 1
@@ -76,7 +79,7 @@ class MainUiClass(QWidget):
         headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
                           'AppleWebKit/537.36 (KHTML, like Gecko) '
-                          'Chrome/102.0.0.0 Safari/537.36'
+                          'Chrome/102.0.0.0 Safari/537.36',
         }
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=headers) as response:
@@ -86,11 +89,28 @@ class MainUiClass(QWidget):
                 print(f"data: {text}")
                 obj.label_result.setText(json_data["result"])
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get("https://picsum.photos/370/250") as response:
-                data = await response.read()
-                with open("temp/test.jpg", "wb") as f:
-                    f.write(data)
+        for i in range(1, count):
+            async with aiohttp.ClientSession() as session:
+                async with session.get("https://picsum.photos/370/250") as response:
+                    data = await response.read()
+                    # im_b64 = base64.b64encode(data).decode("utf8")
+
+                    # form = aiohttp.FormData()
+                    # form.add_field(name="image", value=im_b64)
+                    # form.add_field(name="title", value="image1")
+
+                    async with aiohttp.ClientSession() as session1:
+                        async with session1.post(
+                                url="http://127.0.0.1:8000/post_request/",
+                                data={"title": "image1", "image": data},
+                                # data=form,
+                                headers=headers
+                        ) as response1:
+                            data1 = await response1.read()
+                            print(data1)
+
+                    # with open("temp/test.jpg", "wb") as f:
+                    #     f.write(data)
 
 
 if __name__ == '__main__':

@@ -1,8 +1,14 @@
+import base64
+import io
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
+from django.core.files.images import ImageFile
+
+from . import models
+
 
 # Create your views here.
 
@@ -38,11 +44,16 @@ def post_request(request):
             title = request.POST.get("title", "")
             image = request.FILES.get("image", None)
             if title and image:
+                image = ImageFile(io.BytesIO(image.read()), name='image.jpg')
+                models.ImageModel.objects.create(
+                    title=title,
+                    image=image,
+                )
                 return Response({"result": f"Успешно"})
             else:
                 return Response({"result": "Ошибка получения данных!"})
         else:
             return Response({"result": "Ошибка, данные метод не реализован!"})
     except Exception as error:
-        print(f"Error(get_request): {error}")
+        print(f"Error(post_request): {error}")
         return Response({"result": "Ошибка обработки данных!"})
